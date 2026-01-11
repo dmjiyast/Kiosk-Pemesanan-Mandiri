@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jiyast Mentai - Kios Mobile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .bg-jiyast { background-color: #e65100; }
+        .text-jiyast { color: #e65100; }
+        .border-jiyast { border-color: #e65100; }
+        .menu-scroll::-webkit-scrollbar { width: 0px; height: 0px; }
+        
+        .animate-pop { animation: pop 0.3s ease-out; }
+        @keyframes pop {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .status-item { 
+            animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .pcs-btn.active { background-color: #e65100; color: white; border-color: #e65100; }
+        
+        @media (max-width: 768px) {
+            .main-content { padding-bottom: 20px; }
+            .cart-panel { height: 70vh; transform: translateY(100%); transition: transform 0.3s ease-in-out; }
+            .cart-panel.active { transform: translateY(0); }
+            .monitor-section { height: 120px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 h-screen flex flex-col md:flex-row overflow-hidden">
+
+    <!-- Navigasi Kategori -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t z-50 flex flex-row justify-around py-2 md:relative md:w-32 md:flex-col md:border-r md:border-t-0 md:py-8 md:gap-8 flex-shrink-0">
+        <div class="hidden md:flex mb-4 w-16 h-16 rounded-full overflow-hidden border-2 border-jiyast shadow-lg mx-auto">
+            <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghcNSbLo_WK-UL_RnX3OWKZ7sVzD3jVvOa-6VYGnR2_8Am6ypLBbsJQ2w_f7FQbDBGapsRyEIkjpmnlR5xBh3ca05LdJ2lKbPVlX7wnX2FOhO-IAyUTsT7Ao6kKG0I8TBELiElSlvFm-9cCCklH_4HlJoaaWYMRhsRpqZ4zMZU_2z1rzLjd2EH7UBGupw/s1000/logo.jpeg" alt="Logo" class="w-full h-full object-cover">
+        </div>
+        <button onclick="filterCategory('all')" class="category-btn flex flex-col items-center text-jiyast flex-1 md:flex-none">
+            <div class="p-2 md:p-3 rounded-xl md:rounded-2xl bg-orange-100 mb-1"><i class="fas fa-th-large text-lg"></i></div>
+            <span class="text-[9px] md:text-xs font-bold uppercase">Semua</span>
+        </button>
+        <button onclick="filterCategory('mentai')" class="category-btn flex flex-col items-center text-gray-400 flex-1 md:flex-none">
+            <div class="p-2 md:p-3 rounded-xl md:rounded-2xl bg-gray-100 mb-1"><i class="fas fa-utensils text-lg"></i></div>
+            <span class="text-[9px] md:text-xs font-bold uppercase">Mentai</span>
+        </button>
+        <button onclick="filterCategory('party')" class="category-btn flex flex-col items-center text-gray-400 flex-1 md:flex-none">
+            <div class="p-2 md:p-3 rounded-xl md:rounded-2xl bg-gray-100 mb-1"><i class="fas fa-box text-lg"></i></div>
+            <span class="text-[9px] md:text-xs font-bold uppercase">Party</span>
+        </button>
+        <button onclick="filterCategory('addon')" class="category-btn flex flex-col items-center text-gray-400 flex-1 md:flex-none">
+            <div class="p-2 md:p-3 rounded-xl md:rounded-2xl bg-gray-100 mb-1"><i class="fas fa-plus-circle text-lg"></i></div>
+            <span class="text-[9px] md:text-xs font-bold uppercase">Ekstra</span>
+        </button>
+    </nav>
+
+    <!-- Konten Utama -->
+    <div class="flex-1 flex flex-col min-w-0 bg-gray-50 overflow-hidden relative">
+        <header class="bg-white p-4 flex justify-between items-center shadow-sm z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full overflow-hidden border md:hidden">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghcNSbLo_WK-UL_RnX3OWKZ7sVzD3jVvOa-6VYGnR2_8Am6ypLBbsJQ2w_f7FQbDBGapsRyEIkjpmnlR5xBh3ca05LdJ2lKbPVlX7wnX2FOhO-IAyUTsT7Ao6kKG0I8TBELiElSlvFm-9cCCklH_4HlJoaaWYMRhsRpqZ4zMZU_2z1rzLjd2EH7UBGupw/s1000/logo.jpeg" alt="Logo" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-2xl font-extrabold text-gray-800 leading-none">JIYAST <span class="text-jiyast">MENTAI</span></h1>
+                    <p class="text-gray-400 text-[8px] md:text-xs font-medium uppercase tracking-widest mt-0.5">Status Pesanan Langsung</p>
+                </div>
+            </div>
+            <button onclick="toggleCart()" class="md:hidden relative p-2 text-jiyast bg-orange-50 rounded-full">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+            </button>
+        </header>
+
+        <main id="menu-grid" class="flex-1 p-3 md:p-6 overflow-y-auto main-content grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 content-start pb-24 md:pb-6">
+            <!-- Grid menu diisi melalui JS -->
+        </main>
+
+        <!-- MONITOR STATUS PESANAN -->
+        <div class="bg-white border-t border-gray-100 p-4 md:p-6 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-20 md:h-56 flex flex-col">
+            <div class="flex gap-4 md:gap-8 flex-1 overflow-hidden">
+                <div class="flex-1 flex flex-col min-w-0">
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-[10px] md:text-xs font-black text-gray-400 uppercase tracking-tighter flex items-center">
+                            <span class="flex h-2 w-2 relative mr-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                            </span>
+                            Sedang Disiapkan
+                        </p>
+                        <span id="preparing-count" class="text-[10px] font-bold bg-orange-50 text-orange-600 px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="preparing-list" class="flex-1 space-y-2 overflow-y-auto menu-scroll pr-1"></div>
+                </div>
+                <div class="w-px bg-gray-100 h-full"></div>
+                <div class="flex-1 flex flex-col min-w-0">
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-[10px] md:text-xs font-black text-green-500 uppercase tracking-tighter flex items-center">
+                            <i class="fas fa-check-double mr-2"></i> Siap Diambil
+                        </p>
+                        <span id="ready-count" class="text-[10px] font-bold bg-green-50 text-green-600 px-2 py-0.5 rounded-full">0</span>
+                    </div>
+                    <div id="ready-list" class="flex-1 space-y-2 overflow-y-auto menu-scroll pr-1"></div>
+                </div>
+            </div>
+            <div class="h-10 md:hidden"></div>
+        </div>
+    </div>
+
+    <!-- Sidebar Keranjang -->
+    <div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/50 z-[40] hidden md:hidden"></div>
+    <div id="cart-sidebar" class="cart-panel fixed bottom-0 left-0 right-0 bg-white z-[45] md:relative md:translate-y-0 md:w-80 lg:w-96 md:h-screen md:flex flex flex-col shadow-2xl rounded-t-[2.5rem] md:rounded-none overflow-hidden">
+        <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-3 md:hidden"></div>
+        <div class="p-6 border-b flex justify-between items-center">
+            <h2 class="text-xl font-bold flex items-center text-gray-800">
+                <i class="fas fa-shopping-basket mr-3 text-jiyast"></i> Keranjang
+            </h2>
+            <button onclick="toggleCart()" class="md:hidden text-gray-400 p-1"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="p-4 bg-orange-50/50 border-b border-orange-100">
+            <input type="text" id="customer-name" placeholder="Tulis nama panggilan Anda..." 
+                class="w-full px-4 py-3 rounded-xl border-2 border-white focus:border-jiyast focus:outline-none shadow-sm font-bold text-sm">
+        </div>
+        <div id="cart-container" class="flex-1 overflow-y-auto p-4 space-y-3 menu-scroll"></div>
+        <div class="p-6 bg-gray-50 border-t pb-24 md:pb-6">
+            <div class="flex justify-between items-end mb-4">
+                <div>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-0.5">Total Bayar</p>
+                    <span id="total" class="text-2xl font-black text-jiyast">Rp 0</span>
+                </div>
+            </div>
+            <button onclick="checkout()" class="w-full bg-jiyast text-white py-4 rounded-2xl font-black text-lg shadow-lg active:scale-95 transition">
+                PESAN SEKARANG
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi -->
+    <div id="payment-modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-[100] p-4 backdrop-blur-md">
+        <div class="bg-white rounded-[2.5rem] w-full max-sm p-8 animate-pop text-center shadow-2xl">
+            <div class="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <h3 class="text-2xl font-black mb-1 text-gray-800">Pesanan Diterima!</h3>
+            <p class="text-gray-400 text-sm mb-6">Mohon tunggu sebentar ya, <span id="display-name" class="text-jiyast font-bold">...</span>.</p>
+            
+            <div class="bg-orange-50 p-5 rounded-3xl border-2 border-dashed border-orange-200 mb-8">
+                <p class="text-[10px] text-orange-400 font-black tracking-widest mb-1">ANTREAN ANDA</p>
+                <p id="queue-number" class="text-4xl font-black text-gray-800">#JM-001</p>
+            </div>
+
+            <button onclick="confirmOrder()" class="w-full bg-jiyast text-white py-4 rounded-2xl font-bold shadow-xl">
+                SIAP, TERIMA KASIH!
+            </button>
+        </div>
+    </div>
+
+    <div id="name-error" class="fixed top-20 left-1/2 -translate-x-1/2 bg-red-600 text-white px-8 py-4 rounded-full shadow-2xl hidden z-[110] animate-pop font-black text-sm uppercase">
+        Isi Nama Anda Dulu Ya!
+    </div>
+
+    <script>
+        const multiPcsMenu = [
+            { id: 'dimsum-mentai', name: "Dimsum Mentai", cat: "mentai", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi84VSiKtyItgOXDqmqL_sdRL5gToY3LmrSzMB8d9nYcsW6Qf1aLo8YER0s5svpObpFAAuzfBP28a2Tct88MH02QSYn8mo92tsKtntWULlO989Eb8JILUPRhsrqvDySA4In4N0ws3r7ECoN2dBOr8pcyD3fPMQJT85AUsnINzINpLBM6YA1-WYlQFEBhUo/s1989/dimmen.jpeg", options: [{ pcs: 4, price: 22000 }, { pcs: 6, price: 30000 }, { pcs: 8, price: 40000 }, { pcs: 10, price: 50000 }] },
+            { id: 'dimsum-original', name: "Dimsum Original", cat: "mentai", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiQmz6DZH9_cxSgCeSknJpbwaAgGKNk4N1DGXNQnoqd9xfXVBDqjDsJEHTjYB94OHQ0Ld9aclp4YY7cBeN2BOvpthyI6URkeWCYQnwLfpBmlieir1b4s-HuIUQDLGsBV6mBWk4Y4m8_16rkAO7zsla7ed-USdPp0ulGECPmU7FD_MkgCO1sRsGii-Ckc7U/s704/dimsum%20original.jpeg", options: [{ pcs: 4, price: 15000 }, { pcs: 6, price: 22000 }, { pcs: 8, price: 28000 }, { pcs: 10, price: 35000 }] },
+            { id: 'dimsum-volcano', name: "Dimsum Volcano", cat: "mentai", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhZyRsZ_EBzyGu9bVx4vT4QjLUcWHm16g3TxAWKpV_1m62_FYEyG0ooXbOoYJEVYpqNRu5TkFMWw9pTpMdc9UQ3esTb-GC6ITQUikTYI2Ati9_WwwW618KZOJ-pKO-MYCZ6qigkVcO3uXBog1kLMsfAjc3vW5Gnv9BQYBAU72mUTfytW0I1ntkriM20-Qc/s530/volcano.jpeg", options: [{ pcs: 4, price: 18000 }, { pcs: 6, price: 25000 }, { pcs: 8, price: 32000 }] },
+            { id: 'dimsum-cake-level', name: "Dimsum Cake (Level)", cat: "party", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEic8sVQ7xUV7MxccBa8Da7aqrScU6X9nmf65t8-C7Z2QBlwhkRnGNzkwWs5iL8XeYeFDFvAk3TRpMbXr83M7ktMZzNIZ5MOSy-FgmIMvuOxPtM9oYs5RLdEIOALL9u4J2725GQmqChkIevfAOBfxPmH_kjLH88Qwz4TaSvQVvWs1d-xrkjgdpGSSxyOaow/s1100/mix%20party.jpeg", options: [{ pcs: 10, price: 85000 }, { pcs: 12, price: 90000 }, { pcs: 16, price: 125000 }] },
+            { id: 'dimsum-cake-flat', name: "Dimsum Cake (Flat)", cat: "party", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj4l4ap1GKPfzaInM54xKUucRUHeMih5fvObQXD5le6Qsn0u6rpLEe5fQso85dbgyYuUYFao14mgwilvJCdKft17EiF7CNa8NcyWbLy8w9s4kG1IoZWmOa8fRa3-4abrZ0HoxIGMMoQLyIEsoz1k95lDCMrf3BSAbgb9J1hmvnxd4Io_OEACgXKZtIFPYV9/s1350/IMG-20260106-WA0090.jpg", options: [{ pcs: 10, price: 70000 }, { pcs: 12, price: 80000 }, { pcs: 16, price: 110000 }] },
+            { id: 'mentai-party', name: "Mentai Party Pack", cat: "party", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjrJ8vXvQ0qdKs2JOKFH40V-ofupdByMK7jKy25zZ3MGTlrN8ZppytqSpJP8Lq06AnJxeAki1fvEUYxqzVtEjmr50vtuYt-a_CJugnXjlKa602CWghIZyf8JHnXu7uxb6jaunDla6usij_qpbGoQgznluzGwJxpl-aEwodfVtsQs-AR_n2bCEnmMvq9-HU/s2653/mentai.jpeg", options: [{ pcs: 12, price: 65000 }, { pcs: 16, price: 80000 }, { pcs: 22, price: 130000 }] },
+            { id: 'dimsum-party-ori', name: "Dimsum Party Pack (Ori)", cat: "party", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgtvN_TeW9y4NZUhaJ97zdCS4y3tuAuHyQoZibngto3JvfASCG_VYqSuvXMrQtDqN6PMis59VttqIEYxjuEjeZTd4Um0VS23NmCk7lXr664NFYHyakNhUpr4T4O9GauvedfD6w1G0Bs1elizAHKx4dynfQluqaaHviA-DsFiEzfv_vklCTp-yavTnnaBtc/s715/orgin%20party.jpeg", options: [{ pcs: 12, price: 45000 }, { pcs: 16, price: 60000 }, { pcs: 22, price: 100000 }] }
+        ];
+
+        const singleMenu = [
+            { id: 'addon-mozza', name: "Keju Mozza", price: 6000, cat: "addon", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj9q2wyKygYndSzaRuHK-uCkqC3m6yLDLU-F47jIdv53xwIWQMTBQ8ewkjtqm8_nMFkCJDiirKXpmbLJpIvBDGhGXA3rBmxLkmgbjuqAvwAdfBxIxhAZLnXxZeVoglpa4T49PCLVbrzgWUMJsoZAkWQWNqBA-o51-cov5ksKIM-BcYNHDOffNDsigGlp-66/s782/IMG-20260106-WA0033.jpg" },
+            { id: 'addon-mentai', name: "Ekstra Mentai", price: 5000, cat: "addon", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjqN3YOHfjhUlL15U3Y_GcRBaFEdlrANGc-Pb92X_7duy30amlUr69NRzJXYJJuKlH2j6-btw7VDyPLI9rVM5scrLF1TZ6rWRMARK7HxWptzK_ZHjewcPUU0Nty8Md1lja84Y3Wjll7AHLJOOV13NNlBFlweujIVQrIF_b1nhLQ0svJv3bg2PlPbmpTOcyp/s665/IMG-20260106-WA0031.jpg" },
+            { id: 'addon-chili', name: "Chili Oil", price: 2000, cat: "addon", img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjvYB1crslkGkpqt5u4z7Csr4q95AV_8FfXPQEqg490W7X1cKiaSCQr_BpFvZ88P1oY18FO1h1NgfL6mO3Zzq0QXotKxKiHbs-5phpiF3Yvlo-rByHiIMjz5_ZGy2_UxqW7wsqOi3MdE1X1LgGi20BeC9o4lOja0Ze4Dknl9844rFD6mnPM3PNngLT3f4Aq/s900/IMG-20260106-WA0032.jpg" }
+        ];
+
+        let cart = [];
+        let orderCounter = 1;
+        let selectedPcs = {};
+        let preparingOrders = [];
+        let readyOrders = [];
+
+        /**
+         * Fungsi Notifikasi Suara dengan Aksen Indonesia yang Lebih Natural
+         */
+        function speakOrderReady(order) {
+            if ('speechSynthesis' in window) {
+                // Konversi nomor antrean agar dibaca sebagai angka utuh
+                const orderNum = parseInt(order.id.replace(/[^\d]/g, ''));
+                
+                // Kalimat dengan struktur bahasa lisan Indonesia yang ramah
+                const message = `Halo Kak ${order.name}. Pesanan Anda dengan nomor antrean ${orderNum}, sudah siap ya. Silakan langsung diambil di meja kasir. Terima kasih banyak Kak!`;
+                
+                const utterance = new SpeechSynthesisUtterance(message);
+                
+                // Ambil daftar suara sistem
+                const voices = window.speechSynthesis.getVoices();
+                
+                // Cari suara Google Bahasa Indonesia atau ID-ID yang memiliki aksen lokal
+                // Prioritaskan "Google" voice karena biasanya lebih berkualitas tinggi
+                const idVoice = voices.find(v => v.lang.includes('id-ID') && v.name.includes('Google')) || 
+                                voices.find(v => v.lang.includes('id-ID')) ||
+                                voices.find(v => v.lang.includes('id_ID'));
+                
+                if (idVoice) {
+                    utterance.voice = idVoice;
+                }
+                
+                utterance.lang = 'id-ID';
+                
+                // Pengaturan parameter untuk aksen yang lebih ramah/hangat
+                utterance.rate = 0.95;  // Sedikit diperlambat agar jelas
+                utterance.pitch = 1.1; // Nada sedikit lebih tinggi agar terdengar ceria/ramah
+                utterance.volume = 1.0;
+                
+                // Bersihkan antrean suara sebelumnya agar tidak tumpang tindih
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Event listener untuk memuat suara di awal (penting untuk browser berbasis Chromium)
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = () => {
+                window.speechSynthesis.getVoices();
+            };
+        }
+
+        function renderMenu(category = 'all') {
+            const grid = document.getElementById('menu-grid');
+            grid.innerHTML = '';
+            
+            multiPcsMenu.filter(m => category === 'all' || m.cat === category).forEach(item => {
+                const currentPcs = selectedPcs[item.id] || item.options[0].pcs;
+                const option = item.options.find(o => o.pcs === currentPcs) || item.options[0];
+                const price = option.price;
+                grid.innerHTML += `
+                    <div class="bg-white rounded-[2rem] shadow-sm border p-4 flex flex-col animate-pop">
+                        <div class="h-36 md:h-48 bg-gray-100 rounded-3xl overflow-hidden mb-4 relative">
+                            <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover">
+                            <div class="absolute bottom-2 right-2 bg-white/95 px-4 py-1.5 rounded-2xl text-xs font-black text-jiyast shadow-md">Rp ${price.toLocaleString()}</div>
+                        </div>
+                        <h3 class="font-extrabold text-gray-800 text-sm md:text-base leading-tight mb-3">${item.name}</h3>
+                        <div class="flex gap-2 mb-4 overflow-x-auto pb-2 no-scrollbar">
+                            ${item.options.map(opt => `
+                                <button onclick="selectPcs('${item.id}', ${opt.pcs})" 
+                                    class="pcs-btn flex-shrink-0 px-4 py-2 rounded-xl text-[10px] font-black border transition-all ${currentPcs === opt.pcs ? 'active shadow-lg' : 'bg-gray-50 text-gray-400 border-gray-100'}">
+                                    ${opt.pcs} PCS
+                                </button>
+                            `).join('')}
+                        </div>
+                        <button onclick="addToCartMulti('${item.id}')" class="w-full py-3.5 bg-jiyast text-white rounded-2xl text-xs font-black active:scale-95 transition-all shadow-md">TAMBAH</button>
+                    </div>
+                `;
+            });
+
+            singleMenu.filter(m => category === 'all' || m.cat === category).forEach(item => {
+                grid.innerHTML += `
+                    <div class="bg-white rounded-[2rem] shadow-sm border p-4 flex flex-col animate-pop">
+                        <div class="h-36 md:h-48 bg-gray-100 rounded-3xl overflow-hidden mb-4 relative">
+                            <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover">
+                            <div class="absolute bottom-2 right-2 bg-white/95 px-4 py-1.5 rounded-2xl text-xs font-black text-jiyast shadow-md">Rp ${item.price.toLocaleString()}</div>
+                        </div>
+                        <h3 class="font-extrabold text-gray-800 text-sm md:text-base leading-tight mb-1">${item.name}</h3>
+                        <p class="text-[9px] text-gray-400 mb-4 italic line-clamp-1">${item.desc || 'Ekstra Pilihan'}</p>
+                        <button onclick="addToCartSingle('${item.id}')" class="mt-auto w-full py-3.5 bg-orange-50 text-jiyast border border-orange-100 rounded-2xl text-xs font-black active:scale-95 transition-all">TAMBAH</button>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleCart() {
+            if (window.innerWidth >= 768) return;
+            const sidebar = document.getElementById('cart-sidebar');
+            const overlay = document.getElementById('cart-overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('hidden');
+        }
+
+        function selectPcs(id, pcs) {
+            selectedPcs[id] = pcs;
+            const activeCategoryBtn = document.querySelector('.category-btn.text-jiyast');
+            if (activeCategoryBtn) {
+                const currentFilter = activeCategoryBtn.getAttribute('onclick').match(/'([^']+)'/)[1];
+                renderMenu(currentFilter);
+            }
+        }
+
+        function addToCartMulti(id) {
+            const item = multiPcsMenu.find(m => m.id === id);
+            const pcs = selectedPcs[id] || item.options[0].pcs;
+            const opt = item.options.find(o => o.pcs === pcs);
+            const cartId = `${id}-${pcs}`;
+            const inCart = cart.find(c => c.id === cartId);
+            if (inCart) inCart.qty++;
+            else cart.push({ id: cartId, name: `${item.name} ${pcs} Pcs`, price: opt.price, img: item.img, qty: 1 });
+            updateCart();
+        }
+
+        function addToCartSingle(id) {
+            const item = singleMenu.find(m => m.id === id);
+            const inCart = cart.find(c => c.id === id);
+            if (inCart) inCart.qty++;
+            else cart.push({ ...item, qty: 1 });
+            updateCart();
+        }
+
+        function updateCart() {
+            const container = document.getElementById('cart-container');
+            const totalEl = document.getElementById('total');
+            const countEl = document.getElementById('cart-count');
+            let total = 0, totalQty = 0;
+            container.innerHTML = '';
+            
+            cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                totalQty += item.qty;
+                container.innerHTML += `
+                    <div class="flex items-center gap-4 bg-white p-3 rounded-2xl border border-gray-100 shadow-sm">
+                        <div class="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0">
+                            <img src="${item.img}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-xs font-extrabold text-gray-800 truncate">${item.name}</h4>
+                            <p class="text-[11px] text-jiyast font-black">Rp ${(item.price * item.qty).toLocaleString()}</p>
+                        </div>
+                        <div class="flex items-center gap-2 bg-gray-50 p-1 rounded-xl border">
+                            <button onclick="changeQty(${index}, -1)" class="w-6 h-6 flex items-center justify-center text-xs font-bold">-</button>
+                            <span class="text-xs font-black min-w-[12px] text-center">${item.qty}</span>
+                            <button onclick="changeQty(${index}, 1)" class="w-6 h-6 flex items-center justify-center text-xs font-bold text-jiyast">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            if (cart.length === 0) container.innerHTML = '<div class="text-center py-12"><i class="fas fa-shopping-basket text-gray-200 text-4xl mb-3"></i><p class="text-xs text-gray-300 font-bold uppercase tracking-widest">Belum ada pesanan</p></div>';
+            
+            totalEl.innerText = `Rp ${total.toLocaleString()}`;
+            countEl.innerText = totalQty;
+        }
+
+        function changeQty(index, delta) {
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) cart.splice(index, 1);
+            updateCart();
+        }
+
+        function filterCategory(cat) {
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('text-jiyast');
+                btn.classList.add('text-gray-400');
+                btn.querySelector('div').classList.replace('bg-orange-100', 'bg-gray-100');
+            });
+            const btn = event.currentTarget;
+            btn.classList.replace('text-gray-400', 'text-jiyast');
+            btn.querySelector('div').classList.replace('bg-gray-100', 'bg-orange-100');
+            renderMenu(cat);
+        }
+
+        function updateStatusMonitor() {
+            const prepList = document.getElementById('preparing-list');
+            const readyList = document.getElementById('ready-list');
+            const prepCount = document.getElementById('preparing-count');
+            const readyCount = document.getElementById('ready-count');
+
+            prepCount.innerText = preparingOrders.length;
+            readyCount.innerText = readyOrders.length;
+
+            if (preparingOrders.length === 0) {
+                prepList.innerHTML = '<div class="h-full flex flex-col items-center justify-center opacity-20"><i class="fas fa-clock mb-1 text-xs"></i><p class="text-[8px] font-black">KOSONG</p></div>';
+            } else {
+                prepList.innerHTML = preparingOrders.map(item => `
+                    <div class="status-item bg-white border border-orange-100 px-3 py-2 rounded-xl flex items-center shadow-sm">
+                        <div class="w-1.5 h-1.5 bg-orange-500 rounded-full mr-3 animate-pulse"></div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-[10px] font-black text-gray-800 truncate leading-none mb-1">${item.name}</p>
+                            <p class="text-[8px] font-bold text-orange-400 tracking-tighter uppercase">${item.id}</p>
+                        </div>
+                        <i class="fas fa-spinner fa-spin text-[8px] text-orange-300"></i>
+                    </div>
+                `).join('');
+            }
+
+            if (readyOrders.length === 0) {
+                readyList.innerHTML = '<div class="h-full flex flex-col items-center justify-center opacity-20"><i class="fas fa-check-circle mb-1 text-xs"></i><p class="text-[8px] font-black">KOSONG</p></div>';
+            } else {
+                readyList.innerHTML = readyOrders.map(item => `
+                    <div class="status-item bg-green-50 border border-green-100 px-3 py-2 rounded-xl flex items-center shadow-sm">
+                        <i class="fas fa-check-circle text-green-500 text-[10px] mr-3"></i>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-[10px] font-black text-green-800 truncate leading-none mb-1">${item.name}</p>
+                            <p class="text-[8px] font-bold text-green-400 tracking-tighter uppercase">${item.id}</p>
+                        </div>
+                        <div class="relative">
+                            <i class="fas fa-bell text-green-500 text-[10px] animate-bounce"></i>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function checkout() {
+            const nameInput = document.getElementById('customer-name');
+            const name = nameInput.value.trim();
+            if (cart.length === 0) return;
+            if (!name) {
+                const err = document.getElementById('name-error');
+                err.classList.remove('hidden');
+                setTimeout(() => err.classList.add('hidden'), 3000);
+                return;
+            }
+
+            const qId = `#JM-${String(orderCounter).padStart(3, '0')}`;
+            document.getElementById('queue-number').innerText = qId;
+            document.getElementById('display-name').innerText = name;
+            document.getElementById('payment-modal').classList.replace('hidden', 'flex');
+            
+            const orderData = { id: qId, name: name };
+            preparingOrders.push(orderData);
+            updateStatusMonitor();
+
+            // Simulasi proses pesanan (8 detik proses dapur)
+            setTimeout(() => {
+                preparingOrders = preparingOrders.filter(o => o.id !== qId);
+                readyOrders.unshift(orderData);
+                if (readyOrders.length > 5) readyOrders.pop();
+                updateStatusMonitor();
+                
+                // PANGGIL NOTIFIKASI SUARA DENGAN AKSEN INDONESIA
+                speakOrderReady(orderData);
+                
+                // Hapus otomatis setelah 30 detik
+                setTimeout(() => {
+                    readyOrders = readyOrders.filter(o => o.id !== qId);
+                    updateStatusMonitor();
+                }, 30000);
+            }, 8000);
+
+            orderCounter++;
+        }
+
+        function confirmOrder() {
+            cart = [];
+            updateCart();
+            document.getElementById('customer-name').value = '';
+            document.getElementById('payment-modal').classList.replace('flex', 'hidden');
+            if (window.innerWidth < 768) toggleCart();
+        }
+
+        window.onload = () => {
+            renderMenu();
+            updateStatusMonitor();
+        };
+    </script>
+</body>
+</html>
